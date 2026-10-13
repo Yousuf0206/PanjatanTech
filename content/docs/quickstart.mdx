@@ -1,0 +1,35 @@
+---
+title: Quickstart
+description: Make your first API request in a few minutes.
+order: 2
+section: Getting started
+---
+
+{/* TODO(devrel): verify - endpoint paths, key format and response shape are illustrative. */}
+
+## 1. Get an API key
+
+Create a key in the dashboard and store it as an environment variable.
+
+```bash
+export PANJATAN_API_KEY="pk_test_xxxxxxxx"
+```
+
+## 2. Send a request
+
+```bash
+curl https://api.example.com/v1/models \
+  -H "Authorization: Bearer $PANJATAN_API_KEY"
+```
+
+## 3. Read the response
+
+```json
+{
+  "data": [{ "id": "example-model", "object": "model" }]
+}
+```
+
+## Next steps
+
+Read about [authentication](/developers/docs/authentication) or try the [API explorer](/developers/api).

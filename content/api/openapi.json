@@ -1,0 +1,53 @@
+{
+  "openapi": "3.0.0-placeholder",
+  "info": {
+    "title": "PanjatanTech API (placeholder)",
+    "version": "0.0.0",
+    "description": "Illustrative endpoints only. TODO(devrel): replace with the real OpenAPI document."
+  },
+  "servers": [{ "url": "https://api.example.com" }],
+  "paths": {
+    "/v1/models": {
+      "get": {
+        "operationId": "listModels",
+        "summary": "List models",
+        "description": "Returns the models available to your key.",
+        "parameters": [
+          { "name": "limit", "in": "query", "required": false, "description": "Maximum number of results.", "example": "10" }
+        ]
+      }
+    },
+    "/v1/models/{model_id}": {
+      "get": {
+        "operationId": "getModel",
+        "summary": "Retrieve a model",
+        "description": "Returns a single model by id.",
+        "parameters": [
+          { "name": "model_id", "in": "path", "required": true, "description": "Model identifier.", "example": "example-model" }
+        ]
+      }
+    },
+    "/v1/completions": {
+      "post": {
+        "operationId": "createCompletion",
+        "summary": "Create a completion",
+        "description": "Generates a completion for the given prompt.",
+        "parameters": [],
+        "requestBody": {
+          "description": "JSON body.",
+          "example": { "model": "example-model", "prompt": "Hello", "max_tokens": 64 }
+        }
+      }
+    },
+    "/v1/documents/{document_id}": {
+      "delete": {
+        "operationId": "deleteDocument",
+        "summary": "Delete a document",
+        "description": "Deletes a stored document.",
+        "parameters": [
+          { "name": "document_id", "in": "path", "required": true, "description": "Document identifier.", "example": "doc_123" }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+---
+title: Rate limits
+description: How request limits work and how to back off.
+order: 3
+section: Concepts
+---
+
+{/* TODO(devrel): verify - actual limits, header names and retry guidance. */}
+
+Limits are applied per API key. Numbers are not yet published.
+
+## Handling 429 responses
+
+Retry with exponential backoff and jitter.
+
+```ts
+async function withRetry<T>(fn: () => Promise<T>, attempts = 4): Promise<T> {
+  for (let i = 0; ; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (i >= attempts - 1) throw err;
+      await new Promise((r) => setTimeout(r, 2 ** i * 500 + Math.random() * 250));
+    }
+  }
+}
+```

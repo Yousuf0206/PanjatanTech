@@ -1,0 +1,90 @@
+---
+title: Vector Store
+description: Store documents and retrieve the most relevant ones for RAG.
+order: 4
+section: Products
+---
+
+The Vector Store keeps your documents in named indexes and returns the closest matches for a query. Documents are embedded when you write them, so you send plain text.
+
+## Add documents
+
+`POST /v1/indexes/{index}/documents` adds documents, or replaces them if they already exist. Each document has an `id`, its `text` and optional `metadata` you can filter on later.
+
+<CodeGroup>
+
+```ts
+import { Panjatan } from "@panjatantech/sdk";
+
+const client = new Panjatan({ apiKey: process.env.PANJATAN_API_KEY });
+
+await client.indexes.upsert("support-articles", {
+  documents: [
+    { id: "kb-42", text: "To reset your password, open Settings → Security.", metadata: { product: "web" } },
+  ],
+});
+```
+
+```bash
+curl https://api.panjatantech.com/v1/indexes/support-articles/documents \
+  -H "Authorization: Bearer $PANJATAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "documents": [{ "id": "kb-42", "text": "To reset your password, open Settings → Security.", "metadata": { "product": "web" } }] }'
+```
+
+```python
+import os, requests
+
+headers = {"Authorization": f"Bearer {os.environ['PANJATAN_API_KEY']}"}
+requests.post(
+    "https://api.panjatantech.com/v1/indexes/support-articles/documents",
+    headers=headers,
+    json={"documents": [{"id": "kb-42", "text": "To reset your password, open Settings → Security.", "metadata": {"product": "web"}}]},
+)
+```
+
+</CodeGroup>
+
+## Query an index
+
+`POST /v1/indexes/{index}/query` returns the `top_k` most similar documents, each with a similarity `score`. Use `filter` to restrict results by metadata.
+
+<CodeGroup>
+
+```ts
+const { matches } = await client.indexes.query("support-articles", {
+  query: "How do I reset my password?",
+  top_k: 3,
+  filter: { product: "web" },
+});
+```
+
+```bash
+curl https://api.panjatantech.com/v1/indexes/support-articles/query \
+  -H "Authorization: Bearer $PANJATAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "query": "How do I reset my password?", "top_k": 3, "filter": { "product": "web" } }'
+```
+
+```python
+res = requests.post(
+    "https://api.panjatantech.com/v1/indexes/support-articles/query",
+    headers=headers,
+    json={"query": "How do I reset my password?", "top_k": 3, "filter": {"product": "web"}},
+)
+matches = res.json()["matches"]
+```
+
+</CodeGroup>
+
+## Using results for RAG
+
+Pass the matched `text` to the [Inference API](/developers/docs/inference-api) as context:
+
+```ts
+const context = matches.map((m) => m.text).join("\n");
+const answer = await client.inference.create({
+  model: "MODEL_ID",
+  input: `Answer using only this context:\n${context}\n\nQuestion: How do I reset my password?`,
+});
+```

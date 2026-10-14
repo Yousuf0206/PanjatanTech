@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Button, Card, CardDescription, CardTitle, Container, Section, SectionHeading } from "@/components/ui";
-import { applyEmail, benefits, culture, roles } from "@/content/careers";
+import { applyEmail, culture, roles } from "@/content/careers";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: "Work with us. Culture, benefits and open roles at PanjatanTech.",
+  description: "Work with us. Culture and open roles at PanjatanTech.",
   alternates: { canonical: "/careers" },
 };
 
@@ -34,20 +35,11 @@ export default function CareersPage() {
 
       <Section className="pt-0 sm:pt-0">
         <Container>
-          <h2 className="text-2xl font-semibold text-fg">Benefits</h2>
-          <ul className="mt-4 list-disc space-y-2 pl-6 text-fg-muted">
-            {benefits.map((b) => (
-              <li key={b}>{b}</li>
-            ))}
-          </ul>
-        </Container>
-      </Section>
-
-      <Section className="pt-0 sm:pt-0">
-        <Container>
           <h2 className="text-2xl font-semibold text-fg">Open roles</h2>
           {roles.length === 0 ? (
-            <p className="mt-4 text-fg-muted">No open roles right now. Check back soon.</p>
+            <p className="mt-4 text-fg-muted">
+              We&apos;re hiring soon. Roles will be listed here when they open.
+            </p>
           ) : (
             <ul className="mt-6 grid gap-4 md:grid-cols-2">
               {roles.map((r) => (
@@ -59,9 +51,13 @@ export default function CareersPage() {
                     </CardDescription>
                     <p className="mt-2 text-sm text-fg-muted">{r.summary}</p>
                     <Button asChild size="sm" className="mt-4">
-                      <a href={`mailto:${applyEmail}?subject=${encodeURIComponent(`Application: ${r.title}`)}`}>
-                        Apply by email
-                      </a>
+                      {applyEmail ? (
+                        <a href={`mailto:${applyEmail}?subject=${encodeURIComponent(`Application: ${r.title}`)}`}>
+                          Apply by email
+                        </a>
+                      ) : (
+                        <Link href="/contact">Apply</Link>
+                      )}
                     </Button>
                   </Card>
                 </li>
@@ -69,10 +65,10 @@ export default function CareersPage() {
             </ul>
           )}
           <p className="mt-8 text-sm text-fg-muted">
-            Do not see a fit? Write to{" "}
-            <a className="text-cyan underline underline-offset-4" href={`mailto:${applyEmail}`}>
-              {applyEmail}
-            </a>
+            Want to be first to hear?{" "}
+            <Link className="text-cyan underline underline-offset-4" href="/contact">
+              Get in touch
+            </Link>
             .
           </p>
         </Container>

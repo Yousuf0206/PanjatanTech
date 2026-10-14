@@ -6,7 +6,7 @@ import { Button, Container, Section, SectionHeading } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "Preview of PanjatanTech plans: Free, Pro, Team and Enterprise.",
+  description: "PanjatanTech plans: start free, then talk to sales about Pro, Team and Enterprise.",
 };
 
 export default function PricingPage() {
@@ -18,14 +18,8 @@ export default function PricingPage() {
             as="h1"
             eyebrow="Pricing"
             title="Plans for every stage"
-            description="Start free and scale as you ship."
+            description="Start free. When you are ready to scale, we will put together pricing that fits your usage."
           />
-          <p
-            role="note"
-            className="mx-auto mt-6 max-w-xl rounded-md border border-purple/30 bg-purple/10 p-3 text-center text-sm text-fg"
-          >
-            <strong>Pricing preview.</strong> Amounts shown are placeholders and not final.
-          </p>
           <div className="mt-10">
             <PricingView />
           </div>

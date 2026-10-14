@@ -1,24 +1,32 @@
-import { Badge, Card, CardDescription, CardTitle, Container, Section, SectionHeading } from "@/components/ui";
+import Link from "next/link";
+import { Button, Card, CardDescription, CardTitle, Container, Section } from "@/components/ui";
 
-// TODO(content): replace placeholder values with approved copy.
+// Drawn from the project Constitution (.specify/memory/constitution.md).
 const values = [
-  { title: "Honesty first", body: "Placeholder: we say what our products do and what they do not." },
-  { title: "Build for production", body: "Placeholder: reliability is a feature, not an afterthought." },
-  { title: "Respect developers' time", body: "Placeholder: clear docs, predictable APIs, fewer surprises." },
+  {
+    title: "Say only what is true",
+    body: "Pricing, uptime and capability claims on our site are ones we can verify. If something isn't ready, we say so.",
+  },
+  {
+    title: "Engineer for production",
+    body: "Performance, security and reliability are features we design for from the start, not polish added at the end.",
+  },
+  {
+    title: "Respect developers' time",
+    body: "Clear documentation, predictable APIs and fast tooling, so you spend your time on your product rather than ours.",
+  },
+  {
+    title: "Build for everyone",
+    body: "Accessible, keyboard-friendly interfaces and privacy-respecting defaults are part of the baseline.",
+  },
 ];
-
-// TODO(content): add real team members (names, roles, approved photos). None invented.
-const teamSlots = ["Team member 1", "Team member 2", "Team member 3", "Team member 4"];
-
-// TODO(content): add real company milestones.
-const milestones = ["Milestone 1", "Milestone 2", "Milestone 3"];
 
 export function Values() {
   return (
     <Section className="pt-0 sm:pt-0">
       <Container>
-        <h2 className="text-2xl font-semibold text-fg">Our values</h2>
-        <ul className="mt-6 grid gap-4 md:grid-cols-3">
+        <h2 className="text-2xl font-semibold text-fg">What we value</h2>
+        <ul className="mt-6 grid gap-4 sm:grid-cols-2">
           {values.map((v) => (
             <li key={v.title} className="flex">
               <Card className="w-full">
@@ -33,46 +41,26 @@ export function Values() {
   );
 }
 
+// Team profiles are added once names, roles and photos are approved.
 export function Team() {
   return (
     <Section className="pt-0 sm:pt-0">
       <Container>
-        <SectionHeading title="Team" description="Team profiles are coming soon." align="left" />
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {teamSlots.map((label) => (
-            <li key={label}>
-              <Card>
-                <div
-                  aria-hidden="true"
-                  className="size-16 rounded-full border border-dashed border-border bg-surface-raised"
-                />
-                <p className="mt-4 font-semibold text-fg">{label}</p>
-                <p className="text-sm text-fg-muted">Name and role to be announced</p>
-                <Badge variant="neutral" className="mt-3">
-                  Placeholder
-                </Badge>
-              </Card>
-            </li>
-          ))}
-        </ul>
-      </Container>
-    </Section>
-  );
-}
-
-export function Timeline() {
-  return (
-    <Section className="pt-0 sm:pt-0">
-      <Container>
-        <SectionHeading title="Timeline" align="left" />
-        <ol className="mt-6 space-y-4 border-l border-border pl-6">
-          {milestones.map((m) => (
-            <li key={m}>
-              <p className="font-medium text-fg">{m}</p>
-              <p className="text-sm text-fg-muted">TODO: date and description to be added.</p>
-            </li>
-          ))}
-        </ol>
+        <div className="rounded-lg border border-border bg-surface p-8 sm:p-10">
+          <h2 className="text-2xl font-semibold text-fg">The team</h2>
+          <p className="mt-3 max-w-2xl text-fg-muted">
+            Team profiles are coming soon. In the meantime, we&apos;re happy to talk about what
+            you&apos;re building.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button asChild>
+              <Link href="/contact">Get in touch</Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/careers">Careers</Link>
+            </Button>
+          </div>
+        </div>
       </Container>
     </Section>
   );

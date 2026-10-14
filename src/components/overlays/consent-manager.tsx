@@ -12,6 +12,11 @@ import {
 
 type Props = { nonce?: string };
 
+// Essential cookies need no consent, so the banner only appears when an analytics vendor is configured.
+const analyticsConfigured = Boolean(
+  process.env.NEXT_PUBLIC_POSTHOG_KEY || process.env.NEXT_PUBLIC_GA_ID,
+);
+
 function optOutPostHog() {
   (window as unknown as { posthog?: { opt_out_capturing?: () => void } }).posthog?.opt_out_capturing?.();
 }
@@ -25,7 +30,7 @@ export function ConsentManager({ nonce }: Props) {
   useEffect(() => {
     const stored = readConsent();
     setAnalytics(stored?.analytics === true);
-    setBannerOpen(stored === null);
+    setBannerOpen(analyticsConfigured && stored === null);
     setReady(true);
     const reopen = () => setBannerOpen(true);
     window.addEventListener(CONSENT_OPEN_EVENT, reopen);
@@ -40,7 +45,7 @@ export function ConsentManager({ nonce }: Props) {
     if (!state.analytics) optOutPostHog();
   };
 
-  if (!ready) return null;
+  if (!ready || !analyticsConfigured) return null;
   return (
     <>
       {analytics && <AnalyticsScripts nonce={nonce} />}

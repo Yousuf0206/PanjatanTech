@@ -16,7 +16,7 @@ export function ArchitectureDiagram({ name }: { name: string }) {
       >
         <title id="arch-title">{`${name} architecture overview`}</title>
         <desc id="arch-desc">
-          {`Illustrative flow: your application calls an API gateway, which routes requests to ${name}, which reads and writes storage.`}
+          {`Simplified flow: your application calls an API gateway, which routes requests to ${name}, which reads and writes storage.`}
         </desc>
         {boxes.map((b, i) => (
           <g key={b.label}>
@@ -57,7 +57,7 @@ export function ArchitectureDiagram({ name }: { name: string }) {
         </defs>
       </svg>
       <figcaption className="mt-2 text-xs text-fg-subtle">
-        Illustrative diagram, not final architecture.
+        Simplified request flow.
       </figcaption>
     </figure>
   );

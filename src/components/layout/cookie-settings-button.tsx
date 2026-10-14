@@ -4,6 +4,8 @@ import { openConsentPreferences } from "@/lib/consent";
 
 /** Lets visitors reopen the consent preferences after their first choice. */
 export function CookieSettingsButton() {
+  // Nothing to configure when no analytics vendor is set up.
+  if (!process.env.NEXT_PUBLIC_POSTHOG_KEY && !process.env.NEXT_PUBLIC_GA_ID) return null;
   return (
     <button
       type="button"

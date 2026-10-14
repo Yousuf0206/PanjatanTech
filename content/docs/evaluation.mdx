@@ -1,0 +1,74 @@
+---
+title: Evaluation
+description: Score a model or prompt version against a test set before you ship.
+order: 6
+section: Products
+---
+
+Eval Studio runs a versioned test set against a target, such as a model, and reports how many cases passed. Run an evaluation whenever you change a model or prompt, and compare results across versions.
+
+## Start an evaluation
+
+`POST /v1/evals` takes the `test_set` to run and the `target` to evaluate, and returns `202 Accepted` with the evaluation `id`.
+
+<CodeGroup>
+
+```ts
+import { Panjatan } from "@panjatantech/sdk";
+
+const client = new Panjatan({ apiKey: process.env.PANJATAN_API_KEY });
+
+const evaluation = await client.evals.create({
+  test_set: "support-answers-v3",
+  target: { model: "MODEL_ID" },
+});
+```
+
+```bash
+curl https://api.panjatantech.com/v1/evals \
+  -H "Authorization: Bearer $PANJATAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "test_set": "support-answers-v3", "target": { "model": "MODEL_ID" } }'
+```
+
+```python
+import os, requests
+
+headers = {"Authorization": f"Bearer {os.environ['PANJATAN_API_KEY']}"}
+evaluation = requests.post(
+    "https://api.panjatantech.com/v1/evals",
+    headers=headers,
+    json={"test_set": "support-answers-v3", "target": {"model": "MODEL_ID"}},
+).json()
+```
+
+</CodeGroup>
+
+## Read the results
+
+`GET /v1/evals/{eval_id}` returns the `status` and, once `completed`, the `results`.
+
+<CodeGroup>
+
+```ts
+const result = await client.evals.get(evaluation.id);
+if (result.status === "completed") {
+  const { passed, total } = result.results;
+  console.log(`${passed}/${total} passed`);
+}
+```
+
+```bash
+curl https://api.panjatantech.com/v1/evals/eval_31a7 \
+  -H "Authorization: Bearer $PANJATAN_API_KEY"
+```
+
+```python
+result = requests.get(f"https://api.panjatantech.com/v1/evals/{evaluation['id']}", headers=headers).json()
+```
+
+</CodeGroup>
+
+## Use evaluations in CI
+
+Run an evaluation in your CI pipeline and fail the build when the pass count drops below the previous version's. This catches quality regressions before a model or prompt change reaches users.

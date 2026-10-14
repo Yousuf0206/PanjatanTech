@@ -1,24 +1,53 @@
 ---
 title: Authentication
-description: Authenticate requests with bearer API keys.
-order: 1
-section: Concepts
+description: Authenticate every request with an API key sent as a bearer token.
+order: 2
+section: Getting started
 ---
 
-{/* TODO(devrel): verify - auth scheme, key prefixes and rotation behaviour. */}
+The PanjatanTech API authenticates requests with API keys. Send your key in the `Authorization` header as a bearer token on every request to `https://api.panjatantech.com`.
 
-Requests are authenticated with a bearer token in the `Authorization` header.
+## Sending your key
 
-## Bearer tokens
+<CodeGroup>
 
 ```ts
-const res = await fetch("https://api.example.com/v1/models", {
-  headers: { Authorization: `Bearer ${process.env.PANJATAN_API_KEY}` },
-});
+import { Panjatan } from "@panjatantech/sdk";
+
+// The SDK sets the Authorization header for you.
+const client = new Panjatan({ apiKey: process.env.PANJATAN_API_KEY });
 ```
+
+```bash
+curl https://api.panjatantech.com/v1/models \
+  -H "Authorization: Bearer $PANJATAN_API_KEY"
+```
+
+```python
+import os, requests
+
+headers = {"Authorization": f"Bearer {os.environ['PANJATAN_API_KEY']}"}
+requests.get("https://api.panjatantech.com/v1/models", headers=headers)
+```
+
+</CodeGroup>
 
 ## Keeping keys safe
 
-- Never ship keys in client-side code.
-- Use separate keys per environment.
-- Rotate keys if you suspect exposure.
+- **Server-side only.** API keys grant full access to your account's usage. Never ship them in browser or mobile code; call the API from your backend.
+- **Use environment variables or a secrets manager.** Keep keys out of source control and logs.
+- **One key per environment.** Separate keys for development, staging and production let you revoke one without affecting the others.
+- **Rotate on exposure.** If a key may have leaked, create a new key, deploy it, then revoke the old one.
+
+## Authentication errors
+
+A missing, malformed or revoked key returns HTTP `401 Unauthorized`. A valid key without access to the requested resource returns `403 Forbidden`. Both return a JSON error body:
+
+```json
+{
+  "error": {
+    "type": "authentication_error",
+    "message": "Invalid API key."
+  }
+}
+```

@@ -1,0 +1,89 @@
+---
+title: Agents
+description: Start durable agent runs and retrieve their results.
+order: 5
+section: Products
+---
+
+Agent Runtime executes multi-step agents with persisted state. You start a run with an agent name and input; the run executes asynchronously and you retrieve its status and output by id.
+
+## Start a run
+
+`POST /v1/agent-runs` returns `202 Accepted` with the run `id` and an initial `status` of `queued`.
+
+<CodeGroup>
+
+```ts
+import { Panjatan } from "@panjatantech/sdk";
+
+const client = new Panjatan({ apiKey: process.env.PANJATAN_API_KEY });
+
+const run = await client.agentRuns.create({
+  agent: "support-triage",
+  input: "Customer reports checkout fails with error 502.",
+});
+console.log(run.id, run.status);
+```
+
+```bash
+curl https://api.panjatantech.com/v1/agent-runs \
+  -H "Authorization: Bearer $PANJATAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "agent": "support-triage", "input": "Customer reports checkout fails with error 502." }'
+```
+
+```python
+import os, requests
+
+headers = {"Authorization": f"Bearer {os.environ['PANJATAN_API_KEY']}"}
+run = requests.post(
+    "https://api.panjatantech.com/v1/agent-runs",
+    headers=headers,
+    json={"agent": "support-triage", "input": "Customer reports checkout fails with error 502."},
+).json()
+```
+
+</CodeGroup>
+
+## Check a run
+
+`GET /v1/agent-runs/{run_id}` returns the current `status`: `queued`, `running`, `completed` or `failed`. When the run is `completed`, `output` holds the result.
+
+<CodeGroup>
+
+```ts
+let current = await client.agentRuns.get(run.id);
+while (current.status === "queued" || current.status === "running") {
+  await new Promise((r) => setTimeout(r, 2000));
+  current = await client.agentRuns.get(run.id);
+}
+console.log(current.output);
+```
+
+```bash
+curl https://api.panjatantech.com/v1/agent-runs/run_8f2c \
+  -H "Authorization: Bearer $PANJATAN_API_KEY"
+```
+
+```python
+import time
+
+while True:
+    current = requests.get(f"https://api.panjatantech.com/v1/agent-runs/{run['id']}", headers=headers).json()
+    if current["status"] not in ("queued", "running"):
+        break
+    time.sleep(2)
+print(current.get("output"))
+```
+
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "id": "run_8f2c",
+  "status": "completed",
+  "output": "Routed to Payments on-call with priority P2."
+}
+```

@@ -44,6 +44,27 @@ async function Pre({ children }: WithChildren) {
   );
 }
 
+const LABELS: Record<string, string> = { bash: "cURL", ts: "TypeScript", python: "Python", json: "JSON" };
+
+function snippetOf(pre: ReactNode) {
+  const child = isValidElement(pre)
+    ? (Children.toArray((pre.props as WithChildren).children)[0] as ReactElement<CodeProps> | undefined)
+    : undefined;
+  const lang = /language-(\w+)/.exec(child?.props?.className ?? "")?.[1] ?? "text";
+  const code = textOf(child?.props?.children).replace(/\n$/, "");
+  return { language: lang, label: LABELS[lang] ?? lang, code };
+}
+
+/** Wrap consecutive fenced code blocks in <CodeGroup> to show them as language tabs. */
+async function CodeGroup({ children, title }: WithChildren & { title?: string }) {
+  const snippets = Children.toArray(children).filter(isValidElement).map(snippetOf);
+  return (
+    <div className="my-6">
+      <CodeSnippet snippets={snippets} title={title} />
+    </div>
+  );
+}
+
 const linkCls = "text-cyan underline underline-offset-4 hover:text-cyan-dim";
 
 export const mdxComponents = {
@@ -72,4 +93,5 @@ export const mdxComponents = {
       </code>
     ),
   pre: Pre,
+  CodeGroup,
 };

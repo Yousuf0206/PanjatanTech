@@ -2,11 +2,16 @@ import { Check } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CodeSnippet } from "@/components/code/code-snippet";
 import { ArchitectureDiagram } from "@/components/products/architecture-diagram";
-import { getExamples } from "@/components/products/examples";
 import { Badge, Button, Container, Section } from "@/components/ui";
 import { getProduct, productCategories, products } from "@/content/products";
+
+const docSlug: Record<string, string> = {
+  "inference-api": "inference-api",
+  "vector-store": "vector-store",
+  "agent-runtime": "agents",
+  "eval-studio": "evaluation",
+};
 
 type Params = { slug: string };
 
@@ -66,16 +71,20 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       </Section>
 
       <Section className="border-t border-border py-12 sm:py-16">
-        <Container className="grid gap-10 lg:grid-cols-2">
+        <Container className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="mb-6 text-2xl font-semibold text-fg">Code example</h2>
-            <CodeSnippet snippets={getExamples(product.slug)} title="Illustrative example (placeholder host and SDK)" />
+            <h2 className="text-2xl font-semibold text-fg">Start building</h2>
+            <p className="mt-2 text-fg-muted">
+              Read the {product.name} guide, or try its endpoints in the sandbox.
+            </p>
           </div>
-          <div>
-            <h2 className="mb-6 text-2xl font-semibold text-fg">Live demo</h2>
-            <div className="flex min-h-48 items-center justify-center rounded-lg border border-dashed border-border bg-surface p-6 text-center text-fg-muted">
-              Interactive demo coming soon.
-            </div>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild>
+              <Link href={`/developers/docs/${docSlug[product.slug] ?? "quickstart"}`}>Read the guide</Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/developers/api">Try it</Link>
+            </Button>
           </div>
         </Container>
       </Section>

@@ -7,7 +7,7 @@ import { Container, SectionHeading } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "API reference",
-  description: "Explore PanjatanTech API endpoints with an interactive, mocked explorer.",
+  description: "Explore every PanjatanTech API endpoint and try requests against a sandbox.",
 };
 
 export default function ApiPage() {
@@ -22,10 +22,10 @@ export default function ApiPage() {
           align="left"
           eyebrow="API reference"
           title="API explorer"
-          description="Placeholder endpoints for illustration. Requests are sent to a local mock, never a real host."
+          description="Pick an endpoint, fill in the parameters and press Try it. Requests from this page go to a sandbox that returns sample responses, so you don’t need an API key."
         />
         <div className="mt-10">
-          <ApiExplorer operations={toOperations(spec)} host={spec.servers[0]?.url ?? "https://api.example.com"} />
+          <ApiExplorer operations={toOperations(spec)} host={spec.servers[0]?.url ?? "https://api.panjatantech.com"} />
         </div>
       </Container>
     </div>

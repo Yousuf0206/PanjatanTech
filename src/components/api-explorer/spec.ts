@@ -50,7 +50,39 @@ export function buildPath(op: Operation, values: Record<string, string>): string
   return s ? `${p}?${s}` : p;
 }
 
-export function buildSnippets(op: Operation, host: string, path: string, body: string): CodeTabItem[] {
+/** @panjatantech/sdk call for each operation. Keep in sync with content/api/openapi.json. */
+function sdkCall(op: Operation, v: Record<string, string>, body: string): string {
+  const b = body.trim() ? body.replace(/\s*\n\s*/g, " ") : "{}";
+  const q = (k: string) => JSON.stringify(v[k] ?? "");
+  switch (op.id) {
+    case "listModels":
+      return v.limit ? `client.models.list({ limit: ${Number(v.limit)} })` : "client.models.list()";
+    case "createInference":
+      return `client.inference.create(${b})`;
+    case "upsertDocuments":
+      return `client.indexes.upsert(${q("index")}, ${b})`;
+    case "queryIndex":
+      return `client.indexes.query(${q("index")}, ${b})`;
+    case "createAgentRun":
+      return `client.agentRuns.create(${b})`;
+    case "getAgentRun":
+      return `client.agentRuns.get(${q("run_id")})`;
+    case "createEval":
+      return `client.evals.create(${b})`;
+    case "getEval":
+      return `client.evals.get(${q("eval_id")})`;
+    default:
+      return "";
+  }
+}
+
+export function buildSnippets(
+  op: Operation,
+  host: string,
+  path: string,
+  body: string,
+  values: Record<string, string> = {},
+): CodeTabItem[] {
   const url = `${host}${path}`;
   const hasBody = op.method === "POST" && body.trim() !== "";
   const curl = [
@@ -59,15 +91,11 @@ export function buildSnippets(op: Operation, host: string, path: string, body: s
     ...(hasBody ? [`  -H "Content-Type: application/json"`, `  -d '${body.replace(/\s*\n\s*/g, " ")}'`] : []),
   ].join(" \\\n");
   const ts = [
-    `const res = await fetch("${url}", {`,
-    `  method: "${op.method}",`,
-    `  headers: {`,
-    `    Authorization: \`Bearer \${process.env.PANJATAN_API_KEY}\`,`,
-    ...(hasBody ? [`    "Content-Type": "application/json",`] : []),
-    `  },`,
-    ...(hasBody ? [`  body: JSON.stringify(${body.replace(/\s*\n\s*/g, " ")}),`] : []),
-    `});`,
-    `console.log(await res.json());`,
+    `import { Panjatan } from "@panjatantech/sdk";`,
+    ``,
+    `const client = new Panjatan({ apiKey: process.env.PANJATAN_API_KEY });`,
+    `const res = await ${sdkCall(op, values, hasBody ? body : "")};`,
+    `console.log(res);`,
   ].join("\n");
   const py = [
     `import os, requests`,

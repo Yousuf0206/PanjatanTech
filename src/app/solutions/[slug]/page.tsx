@@ -50,6 +50,41 @@ export default async function SolutionPage({ params }: { params: Promise<Params>
           <h2 className="mt-10 text-2xl font-semibold text-fg">Our approach</h2>
           <p className="mt-3 text-fg-muted">{solution.approach}</p>
 
+          <h2 className="mt-10 text-2xl font-semibold text-fg">What you can build</h2>
+          <ul className="mt-6 grid gap-4 sm:grid-cols-3">
+            {solution.useCases.map((u) => (
+              <li key={u.title} className="flex">
+                <Card className="w-full">
+                  <CardTitle className="text-base">{u.title}</CardTitle>
+                  <CardDescription>{u.body}</CardDescription>
+                </Card>
+              </li>
+            ))}
+          </ul>
+
+          <h2 className="mt-10 text-2xl font-semibold text-fg">How it fits together</h2>
+          <ol className="mt-4 space-y-3">
+            {solution.steps.map((step, i) => (
+              <li key={step} className="flex gap-3 text-fg-muted">
+                <span
+                  aria-hidden="true"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-full border border-cyan/40 text-sm font-semibold text-cyan"
+                >
+                  {i + 1}
+                </span>
+                <span className="pt-0.5">{step}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6">
+            <Link
+              href={`/developers/docs/${solution.guide}`}
+              className="text-cyan underline underline-offset-4 hover:text-cyan-dim"
+            >
+              Read the guide
+            </Link>
+          </p>
+
           {solution.complianceNote && (
             <p className="mt-10 rounded-lg border border-border bg-surface p-4 text-sm text-fg-muted">
               {complianceCopy}

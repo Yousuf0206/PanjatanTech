@@ -1,0 +1,74 @@
+---
+title: Inference API
+description: Generate output from hosted models through one versioned endpoint.
+order: 3
+section: Products
+---
+
+The Inference API serves models behind a single endpoint, `POST /v1/inference`. Use [List models](/developers/api) to see which models your key can use.
+
+## Create an inference
+
+<CodeGroup>
+
+```ts
+import { Panjatan } from "@panjatantech/sdk";
+
+const client = new Panjatan({ apiKey: process.env.PANJATAN_API_KEY });
+
+const res = await client.inference.create({
+  model: "MODEL_ID",
+  input: "Summarise this support ticket in one sentence.",
+  max_tokens: 128,
+});
+console.log(res.output, res.usage);
+```
+
+```bash
+curl https://api.panjatantech.com/v1/inference \
+  -H "Authorization: Bearer $PANJATAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "model": "MODEL_ID", "input": "Summarise this support ticket in one sentence.", "max_tokens": 128 }'
+```
+
+```python
+import os, requests
+
+res = requests.post(
+    "https://api.panjatantech.com/v1/inference",
+    headers={"Authorization": f"Bearer {os.environ['PANJATAN_API_KEY']}"},
+    json={"model": "MODEL_ID", "input": "Summarise this support ticket in one sentence.", "max_tokens": 128},
+)
+print(res.json()["output"])
+```
+
+</CodeGroup>
+
+## Request body
+
+- **`model`** (string, required): a model id from `GET /v1/models`.
+- **`input`** (string, required): the prompt or content to process.
+- **`max_tokens`** (integer, optional): upper bound on generated tokens.
+- **`stream`** (boolean, optional): when `true`, the response is sent incrementally as server-sent events.
+
+## Response
+
+```json
+{
+  "id": "inf_123",
+  "model": "MODEL_ID",
+  "output": "The customer cannot complete checkout because payment requests return a 502 error.",
+  "usage": { "input_tokens": 18, "output_tokens": 17 }
+}
+```
+
+`usage` reports the tokens counted for the request, so you can track consumption per call.
+
+## Streaming
+
+Set `stream: true` to receive output as it is generated. With the SDK, iterate over the returned stream:
+
+```ts
+const stream = await client.inference.create({ model: "MODEL_ID", input: "Write a haiku.", stream: true });
+for await (const chunk of stream) process.stdout.write(chunk.output);
+```

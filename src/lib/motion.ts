@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import * as React from "react";
 
 export interface FadeInProps {
@@ -13,21 +12,28 @@ export interface FadeInProps {
 }
 
 /**
- * Scroll-triggered fade/slide-in. Renders static content when the user prefers
- * reduced motion. Never wrap the LCP element (hero h1) in this.
+ * Scroll-triggered fade/slide-in using CSS transitions (see [data-fade] in globals.css) and an
+ * IntersectionObserver — no animation library. The CSS only hides content when scripting is
+ * enabled and the user has not asked for reduced motion. Never wrap the LCP element in this.
  */
 export function FadeIn({ children, delay = 0, y = 16, className }: FadeInProps) {
-  const reduce = useReducedMotion();
-  if (reduce) return React.createElement("div", { className }, children);
-  return React.createElement(
-    motion.div,
-    {
-      className,
-      initial: { opacity: 0, y },
-      whileInView: { opacity: 1, y: 0 },
-      viewport: { once: true, margin: "-60px" },
-      transition: { duration: 0.5, delay, ease: "easeOut" },
-    },
-    children,
-  );
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        el.dataset.shown = "";
+        io.disconnect();
+      },
+      { rootMargin: "0px 0px -60px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const style = { "--fade-delay": `${delay}s`, "--fade-y": `${y}px` } as React.CSSProperties;
+  return React.createElement("div", { ref, className, style, "data-fade": "" }, children);
 }

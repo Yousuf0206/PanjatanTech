@@ -1,51 +1,103 @@
 {
-  "openapi": "3.0.0-placeholder",
+  "openapi": "3.0.3",
   "info": {
-    "title": "PanjatanTech API (placeholder)",
-    "version": "0.0.0",
-    "description": "Illustrative endpoints only. TODO(devrel): replace with the real OpenAPI document."
+    "title": "PanjatanTech API",
+    "version": "1.0.0",
+    "description": "Inference, vector store, agent runs and evaluations. Single source for the docs, the API explorer and the sandbox."
   },
-  "servers": [{ "url": "https://api.example.com" }],
+  "servers": [{ "url": "https://api.panjatantech.com" }],
   "paths": {
     "/v1/models": {
       "get": {
         "operationId": "listModels",
         "summary": "List models",
-        "description": "Returns the models available to your key.",
+        "description": "Returns the models available to your API key.",
         "parameters": [
-          { "name": "limit", "in": "query", "required": false, "description": "Maximum number of results.", "example": "10" }
+          { "name": "limit", "in": "query", "required": false, "description": "Maximum number of results (1–100).", "example": "10" }
         ]
       }
     },
-    "/v1/models/{model_id}": {
-      "get": {
-        "operationId": "getModel",
-        "summary": "Retrieve a model",
-        "description": "Returns a single model by id.",
-        "parameters": [
-          { "name": "model_id", "in": "path", "required": true, "description": "Model identifier.", "example": "example-model" }
-        ]
-      }
-    },
-    "/v1/completions": {
+    "/v1/inference": {
       "post": {
-        "operationId": "createCompletion",
-        "summary": "Create a completion",
-        "description": "Generates a completion for the given prompt.",
+        "operationId": "createInference",
+        "summary": "Run inference",
+        "description": "Generates output from a model for the given input.",
         "parameters": [],
         "requestBody": {
-          "description": "JSON body.",
-          "example": { "model": "example-model", "prompt": "Hello", "max_tokens": 64 }
+          "description": "model (required), input (required), max_tokens, stream.",
+          "example": { "model": "MODEL_ID", "input": "Summarise this support ticket in one sentence.", "max_tokens": 128 }
         }
       }
     },
-    "/v1/documents/{document_id}": {
-      "delete": {
-        "operationId": "deleteDocument",
-        "summary": "Delete a document",
-        "description": "Deletes a stored document.",
+    "/v1/indexes/{index}/documents": {
+      "post": {
+        "operationId": "upsertDocuments",
+        "summary": "Upsert documents",
+        "description": "Adds or replaces documents in a vector index. Documents are embedded on write.",
         "parameters": [
-          { "name": "document_id", "in": "path", "required": true, "description": "Document identifier.", "example": "doc_123" }
+          { "name": "index", "in": "path", "required": true, "description": "Index name.", "example": "support-articles" }
+        ],
+        "requestBody": {
+          "description": "documents: array of { id, text, metadata }.",
+          "example": { "documents": [{ "id": "kb-42", "text": "To reset your password, open Settings → Security.", "metadata": { "product": "web" } }] }
+        }
+      }
+    },
+    "/v1/indexes/{index}/query": {
+      "post": {
+        "operationId": "queryIndex",
+        "summary": "Query an index",
+        "description": "Returns the documents most similar to the query, optionally filtered by metadata.",
+        "parameters": [
+          { "name": "index", "in": "path", "required": true, "description": "Index name.", "example": "support-articles" }
+        ],
+        "requestBody": {
+          "description": "query (required), top_k, filter.",
+          "example": { "query": "How do I reset my password?", "top_k": 3, "filter": { "product": "web" } }
+        }
+      }
+    },
+    "/v1/agent-runs": {
+      "post": {
+        "operationId": "createAgentRun",
+        "summary": "Start an agent run",
+        "description": "Starts a durable agent run. Runs execute asynchronously; retrieve the run to check its status.",
+        "parameters": [],
+        "requestBody": {
+          "description": "agent (required), input (required).",
+          "example": { "agent": "support-triage", "input": "Customer reports checkout fails with error 502." }
+        }
+      }
+    },
+    "/v1/agent-runs/{run_id}": {
+      "get": {
+        "operationId": "getAgentRun",
+        "summary": "Retrieve an agent run",
+        "description": "Returns the status and, when complete, the output of an agent run.",
+        "parameters": [
+          { "name": "run_id", "in": "path", "required": true, "description": "Run identifier.", "example": "run_8f2c" }
+        ]
+      }
+    },
+    "/v1/evals": {
+      "post": {
+        "operationId": "createEval",
+        "summary": "Start an evaluation",
+        "description": "Runs a test set against a model or prompt version and scores the results.",
+        "parameters": [],
+        "requestBody": {
+          "description": "test_set (required), target (required).",
+          "example": { "test_set": "support-answers-v3", "target": { "model": "MODEL_ID" } }
+        }
+      }
+    },
+    "/v1/evals/{eval_id}": {
+      "get": {
+        "operationId": "getEval",
+        "summary": "Retrieve an evaluation",
+        "description": "Returns the status and scores of an evaluation.",
+        "parameters": [
+          { "name": "eval_id", "in": "path", "required": true, "description": "Evaluation identifier.", "example": "eval_31a7" }
         ]
       }
     }

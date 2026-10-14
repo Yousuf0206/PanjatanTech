@@ -12,6 +12,24 @@ export type CodeTabItem = {
   html?: string;
 };
 
+/** Fallback for contexts where the async Clipboard API is unavailable or blocked (e.g. non-HTTPS). */
+function legacyCopy(text: string): boolean {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    return document.execCommand("copy");
+  } catch {
+    return false;
+  } finally {
+    ta.remove();
+  }
+}
+
 export function CodeTabs({ items, title }: { items: CodeTabItem[]; title?: string }) {
   const [active, setActive] = useState(items[0]?.label ?? "");
   const [copied, setCopied] = useState(false);
@@ -22,14 +40,16 @@ export function CodeTabs({ items, title }: { items: CodeTabItem[]; title?: strin
 
   async function copy() {
     if (!current) return;
+    let ok = false;
     try {
       await navigator.clipboard.writeText(current.code);
-      setCopied(true);
-      if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(() => setCopied(false), 2000);
+      ok = true;
     } catch {
-      setCopied(false);
+      ok = legacyCopy(current.code);
     }
+    setCopied(ok);
+    if (timer.current) clearTimeout(timer.current);
+    if (ok) timer.current = setTimeout(() => setCopied(false), 2000);
   }
 
   return (

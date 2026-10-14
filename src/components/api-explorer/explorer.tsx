@@ -31,7 +31,7 @@ export function ApiExplorer({ operations, host }: { operations: Operation[]; hos
 
   if (!op) return null;
   const path = buildPath(op, merged);
-  const snippets = buildSnippets(op, host, path, op.method === "POST" ? body : "");
+  const snippets = buildSnippets(op, host, path, op.method === "POST" ? body : "", merged);
 
   function select(o: Operation) {
     setOpId(o.id);
@@ -48,7 +48,7 @@ export function ApiExplorer({ operations, host }: { operations: Operation[]; hos
       if (op.method === "POST") {
         init = { ...init, headers: { "Content-Type": "application/json" }, body: JSON.stringify(JSON.parse(body)) };
       }
-      // Only ever the local mock route - never the placeholder host.
+      // Only ever the sandbox route; the explorer never calls the production API.
       const res = await fetch(`/api/mock${path}`, init);
       setResult({ status: res.status, body: JSON.stringify(await res.json(), null, 2) });
     } catch (e) {
@@ -138,10 +138,10 @@ export function ApiExplorer({ operations, host }: { operations: Operation[]; hos
             disabled={loading}
             className="inline-flex h-11 items-center rounded-md bg-cyan px-5 text-sm font-medium text-navy hover:bg-cyan-dim disabled:opacity-50"
           >
-            {loading ? "Sending..." : "Send (mock)"}
+            {loading ? "Sending..." : "Try it"}
           </button>
           <p className="text-xs text-fg-subtle">
-            Requests go to a local mock route and return sample data only.
+            Sandbox: sample responses, no API key needed. Copy the code on the right to call the real API.
           </p>
         </form>
 
@@ -162,7 +162,7 @@ export function ApiExplorer({ operations, host }: { operations: Operation[]; hos
               </pre>
             </div>
           )}
-          {!result && <p className="text-sm text-fg-subtle">Press Send to see a sample response.</p>}
+          {!result && <p className="text-sm text-fg-subtle">Press Try it to see a sample response.</p>}
         </section>
       </div>
     </div>

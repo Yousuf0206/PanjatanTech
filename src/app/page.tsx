@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { FinalCta } from "@/components/home/final-cta";
 import { Hero } from "@/components/home/hero";
 import { HowItWorks } from "@/components/home/how-it-works";
-import { Metrics } from "@/components/home/metrics";
 import { ProductsOverview } from "@/components/home/products-overview";
-import { TrustBar } from "@/components/home/trust-bar";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -16,11 +14,10 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
+      {/* Customer logos and metrics are removed until verified data exists (Speckit v2, Sprint 1). */}
       <Hero />
-      <TrustBar />
       <ProductsOverview />
       <HowItWorks />
-      <Metrics />
       <FinalCta />
     </>
   );

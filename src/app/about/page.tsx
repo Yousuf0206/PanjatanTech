@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Container, Section, SectionHeading } from "@/components/ui";
-import { Team, Timeline, Values } from "@/components/about/sections";
+import { Team, Values } from "@/components/about/sections";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Our mission, values, team and story.",
+  description: "Our mission and the values behind how we build.",
   alternates: { canonical: "/about" },
 };
 
@@ -24,7 +24,6 @@ export default function AboutPage() {
       </Section>
       <Values />
       <Team />
-      <Timeline />
     </>
   );
 }

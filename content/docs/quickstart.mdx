@@ -1,35 +1,91 @@
 ---
 title: Quickstart
-description: Make your first API request in a few minutes.
-order: 2
+description: Install the SDK and make your first inference request.
+order: 1
 section: Getting started
 ---
 
-{/* TODO(devrel): verify - endpoint paths, key format and response shape are illustrative. */}
+This guide takes you from zero to a working inference call. You'll need Node.js 18 or later for the TypeScript SDK, or any HTTP client for the REST API.
 
-## 1. Get an API key
+## 1. Create an API key
 
-Create a key in the dashboard and store it as an environment variable.
+Create a key from your PanjatanTech account and store it as an environment variable. Never commit keys to source control.
 
 ```bash
-export PANJATAN_API_KEY="pk_test_xxxxxxxx"
+export PANJATAN_API_KEY="your-api-key"
 ```
 
-## 2. Send a request
+## 2. Install the SDK
 
 ```bash
-curl https://api.example.com/v1/models \
+npm install @panjatantech/sdk
+```
+
+Python and Go SDKs are coming soon. Until then, call the REST API directly; every example in these docs includes a Python version using `requests`.
+
+## 3. Find a model
+
+List the models available to your key and copy an `id`. The examples below use `MODEL_ID` in its place.
+
+<CodeGroup>
+
+```ts
+import { Panjatan } from "@panjatantech/sdk";
+
+const client = new Panjatan({ apiKey: process.env.PANJATAN_API_KEY });
+const models = await client.models.list();
+console.log(models.data.map((m) => m.id));
+```
+
+```bash
+curl https://api.panjatantech.com/v1/models \
   -H "Authorization: Bearer $PANJATAN_API_KEY"
 ```
 
-## 3. Read the response
+```python
+import os, requests
 
-```json
-{
-  "data": [{ "id": "example-model", "object": "model" }]
-}
+res = requests.get(
+    "https://api.panjatantech.com/v1/models",
+    headers={"Authorization": f"Bearer {os.environ['PANJATAN_API_KEY']}"},
+)
+print([m["id"] for m in res.json()["data"]])
 ```
+
+</CodeGroup>
+
+## 4. Run inference
+
+<CodeGroup>
+
+```ts
+const res = await client.inference.create({
+  model: "MODEL_ID",
+  input: "Summarise this support ticket in one sentence.",
+});
+console.log(res.output);
+```
+
+```bash
+curl https://api.panjatantech.com/v1/inference \
+  -H "Authorization: Bearer $PANJATAN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "model": "MODEL_ID", "input": "Summarise this support ticket in one sentence." }'
+```
+
+```python
+res = requests.post(
+    "https://api.panjatantech.com/v1/inference",
+    headers={"Authorization": f"Bearer {os.environ['PANJATAN_API_KEY']}"},
+    json={"model": "MODEL_ID", "input": "Summarise this support ticket in one sentence."},
+)
+print(res.json()["output"])
+```
+
+</CodeGroup>
 
 ## Next steps
 
-Read about [authentication](/developers/docs/authentication) or try the [API explorer](/developers/api).
+- Learn how [authentication](/developers/docs/authentication) works.
+- Add retrieval with the [Vector Store](/developers/docs/vector-store).
+- Try any endpoint without writing code in the [API explorer](/developers/api).

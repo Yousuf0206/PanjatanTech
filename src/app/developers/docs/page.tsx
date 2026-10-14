@@ -12,7 +12,7 @@ export default function DocsIndexPage() {
   return (
     <div>
       <h1 className="text-3xl font-semibold tracking-tight text-fg sm:text-4xl">Documentation</h1>
-      <p className="mt-3 text-fg-muted">Starter docs with illustrative content.</p>
+      <p className="mt-3 text-fg-muted">Guides for getting started and for each PanjatanTech product.</p>
       {getDocsBySection().map((g, i) => (
         <section key={g.section} className="mt-10" aria-labelledby={`sec-${i}`}>
           <h2 id={`sec-${i}`} className="mb-4 text-xl font-semibold text-fg">

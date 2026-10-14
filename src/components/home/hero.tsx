@@ -1,15 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Badge, Button, Container } from "@/components/ui";
+import { products } from "@/content/products";
 import { site } from "@/lib/site";
-
-const code = `import { panjatan } from "@panjatan/sdk";
-
-const res = await panjatan.inference.create({
-  model: "your-model",
-  input: "Summarise this ticket.",
-  stream: true,
-});`;
 
 export function Hero() {
   return (
@@ -43,26 +36,25 @@ export function Hero() {
             </Button>
           </div>
         </div>
-        <figure
-          aria-label="Example SDK usage"
-          className="min-w-0 overflow-hidden rounded-lg border border-border bg-surface shadow-2xl shadow-black/30"
-        >
-          <div
-            className="flex items-center gap-2 border-b border-border px-4 py-3"
-            aria-hidden="true"
-          >
-            <span className="size-2.5 rounded-full bg-border" />
-            <span className="size-2.5 rounded-full bg-border" />
-            <span className="size-2.5 rounded-full bg-border" />
-            <span className="ml-2 font-mono text-xs text-fg-subtle">inference.ts</span>
-          </div>
-          <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-fg-muted sm:text-sm">
-            <code>{code}</code>
-          </pre>
-          <figcaption className="border-t border-border px-4 py-2 text-xs text-fg-subtle">
-            Illustrative snippet — final SDK API pending.
-          </figcaption>
-        </figure>
+        <div className="min-w-0 rounded-lg border border-border bg-surface p-2 shadow-2xl shadow-black/30">
+          <p className="px-4 pt-3 pb-2 font-mono text-xs text-fg-subtle">One platform</p>
+          <ul className="grid gap-2">
+            {products.map((p) => (
+              <li key={p.slug}>
+                <Link
+                  href={`/products/${p.slug}`}
+                  className="flex items-start gap-3 rounded-md px-4 py-3 transition-colors hover:bg-surface-raised"
+                >
+                  <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-cyan" />
+                  <span>
+                    <span className="block font-medium text-fg">{p.name}</span>
+                    <span className="block text-sm text-fg-muted">{p.tagline}</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </Container>
     </section>
   );

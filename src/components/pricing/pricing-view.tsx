@@ -1,43 +1,13 @@
-"use client";
-
-import * as Switch from "@radix-ui/react-switch";
 import { Check, Minus } from "lucide-react";
 import Link from "next/link";
-import { useId, useState } from "react";
 import { Badge, Button, Card } from "@/components/ui";
-import { annualNote, comparison, tiers } from "@/content/pricing";
+import { comparison, tiers } from "@/content/pricing";
 import { cn } from "@/lib/utils";
 
-function price(monthly: number | null, annualMonthly: number | null, annual: boolean) {
-  const v = annual ? annualMonthly : monthly;
-  return v === null ? "Custom" : v === 0 ? "$0" : `$${v}`;
-}
-
 export function PricingView() {
-  const [annual, setAnnual] = useState(false);
-  const id = useId();
   return (
     <>
-      <div className="flex items-center justify-center gap-3">
-        <span className={cn("text-sm", annual ? "text-fg-muted" : "text-fg")} aria-hidden="true">
-          Monthly
-        </span>
-        <Switch.Root
-          id={id}
-          checked={annual}
-          onCheckedChange={setAnnual}
-          aria-label="Bill annually"
-          className="relative h-6 w-11 rounded-full border border-border bg-surface-raised data-[state=checked]:bg-cyan"
-        >
-          <Switch.Thumb className="block size-5 translate-x-0.5 rounded-full bg-white transition-transform data-[state=checked]:translate-x-[22px]" />
-        </Switch.Root>
-        <label htmlFor={id} className={cn("text-sm", annual ? "text-fg" : "text-fg-muted")}>
-          Annual
-        </label>
-      </div>
-      <p className="mt-2 text-center text-xs text-fg-subtle">{annualNote}</p>
-
-      <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className=" grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {tiers.map((t) => (
           <li key={t.id}>
             <Card className={cn("flex h-full flex-col", t.featured && "border-cyan/60")}>
@@ -46,12 +16,7 @@ export function PricingView() {
                 {t.featured && <Badge>Popular</Badge>}
               </h2>
               <p className="mt-2 text-sm text-fg-muted">{t.blurb}</p>
-              <p className="mt-6 text-4xl font-semibold text-fg" aria-live="polite">
-                {price(t.monthly, t.annualMonthly, annual)}
-                {t.monthly !== null && t.monthly > 0 && (
-                  <span className="text-sm font-normal text-fg-muted"> /mo</span>
-                )}
-              </p>
+              <p className="mt-6 text-3xl font-semibold text-fg">{t.price}</p>
               <ul className="mt-6 flex-1 space-y-2 text-sm text-fg-muted">
                 {t.highlights.map((h) => (
                   <li key={h} className="flex gap-2">

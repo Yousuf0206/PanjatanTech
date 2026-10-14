@@ -1,14 +1,12 @@
-// PLACEHOLDER pricing — pending approval. Do not present these figures as final (Constitution III).
+// Prices are not public yet: paid tiers route to sales until amounts are approved (Speckit v2).
 export type TierId = "free" | "pro" | "team" | "enterprise";
 
 export type Tier = {
   id: TierId;
   name: string;
   blurb: string;
-  /** Monthly price in USD; null = contact sales. */
-  monthly: number | null;
-  /** Effective monthly price when billed annually; null = contact sales. */
-  annualMonthly: number | null;
+  /** Display price. Only "Free" is a published amount. */
+  price: string;
   cta: { label: string; href: string };
   highlights: string[];
   featured?: boolean;
@@ -19,8 +17,7 @@ export const tiers: Tier[] = [
     id: "free",
     name: "Free",
     blurb: "Explore the platform and prototype.",
-    monthly: 0,
-    annualMonthly: 0,
+    price: "Free",
     cta: { label: "Start free", href: "/contact" },
     highlights: ["Community support", "Sandbox usage limits", "Single project"],
   },
@@ -28,9 +25,8 @@ export const tiers: Tier[] = [
     id: "pro",
     name: "Pro",
     blurb: "For individual developers shipping to production.",
-    monthly: 29,
-    annualMonthly: 24,
-    cta: { label: "Get Pro", href: "/contact" },
+    price: "Contact sales",
+    cta: { label: "Talk to sales", href: "/contact" },
     highlights: ["Higher usage limits", "Email support", "Multiple projects"],
     featured: true,
   },
@@ -38,17 +34,15 @@ export const tiers: Tier[] = [
     id: "team",
     name: "Team",
     blurb: "Collaboration and controls for growing teams.",
-    monthly: 99,
-    annualMonthly: 82,
-    cta: { label: "Get Team", href: "/contact" },
+    price: "Contact sales",
+    cta: { label: "Talk to sales", href: "/contact" },
     highlights: ["Shared workspaces", "Role-based access", "Priority support"],
   },
   {
     id: "enterprise",
     name: "Enterprise",
     blurb: "Custom terms, security reviews and support.",
-    monthly: null,
-    annualMonthly: null,
+    price: "Contact sales",
     cta: { label: "Contact sales", href: "/contact" },
     highlights: ["Custom limits", "SSO / SAML", "Dedicated support"],
   },
@@ -66,5 +60,3 @@ export const comparison: ComparisonRow[] = [
   { feature: "SSO / SAML", values: [false, false, false, true] },
   { feature: "Support", values: ["Community", "Email", "Priority", "Dedicated"] },
 ];
-
-export const annualNote = "Annual discount is a placeholder; final terms pending approval.";

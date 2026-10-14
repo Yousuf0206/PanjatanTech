@@ -14,6 +14,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Render metadata in <head> for every user agent (not streamed into <body>), so crawlers and
+  // link-preview tools that aren't on Next's bot list still see titles and descriptions.
+  htmlLimitedBots: /.*/,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

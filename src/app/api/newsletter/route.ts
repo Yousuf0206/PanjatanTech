@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { addToAudience } from "@/lib/resend";
 
 const schema = z.object({
   email: z.string().trim().email().max(254),
@@ -12,7 +13,12 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 400 });
   }
-  // TODO: wire newsletter provider (e.g. Resend Audiences: RESEND_API_KEY, RESEND_AUDIENCE_ID).
-  // Intentionally sends/stores nothing yet.
+  const result = await addToAudience(parsed.data.email);
+  if (!result.ok) {
+    return NextResponse.json(
+      { ok: false, error: "We couldn't subscribe you right now. Please try again later." },
+      { status: result.reason === "not_configured" ? 503 : 502 },
+    );
+  }
   return NextResponse.json({ ok: true });
 }

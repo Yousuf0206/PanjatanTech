@@ -76,8 +76,13 @@ pages); cookie banner fixed early so it doesn't block testing.
 - [x] Developers landing page
 
 ### Sprint 3 – Completeness & quality
-- [ ] Deepen Solutions pages
-- [ ] Blog listing + 1–2 published posts
-- [ ] Careers page finalized
-- [ ] Contact form sending (Resend/Formspree) + Cal.com URL
-- [ ] Performance, accessibility, cross-browser passes; soft-launch checklist
+- [x] Deepen Solutions pages (use cases, how-it-fits steps, guide link)
+- [x] Blog listing + 2 published posts (drafts removed)
+- [x] Careers page ("hiring soon" state, per spec)
+- [x] Contact + newsletter wired to Resend REST API (needs RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL, RESEND_AUDIENCE_ID)
+- [ ] Cal.com booking URL (needs NEXT_PUBLIC_CALCOM_URL)
+- [x] Performance pass: framer-motion replaced with CSS + IntersectionObserver (Home JS 151 kB → 108 kB); metadata always in <head>
+- [x] Lighthouse (Edge headless, mobile): Performance 94–96, Accessibility 100, Best practices 96–100, SEO 100 on Home, Pricing, About, Contact, Docs, API explorer, Blog, Solutions
+- [ ] Investigate CSP issue flagged on /contact (no details reported)
+- [ ] Cross-browser and real-device testing (Safari, Firefox, iOS, Android)
+- [ ] Soft-launch checklist (docs/launch-checklist.md)

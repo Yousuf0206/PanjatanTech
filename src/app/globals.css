@@ -64,6 +64,21 @@ body {
   background: color-mix(in srgb, var(--color-cyan) 35%, transparent);
 }
 
+/* Scroll fade-in used by FadeIn (src/lib/motion.ts). Content stays visible without JS or with reduced motion. */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  [data-fade] {
+    opacity: 0;
+    transform: translateY(var(--fade-y, 16px));
+    transition:
+      opacity 0.5s ease-out var(--fade-delay, 0s),
+      transform 0.5s ease-out var(--fade-delay, 0s);
+  }
+  [data-fade][data-shown] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

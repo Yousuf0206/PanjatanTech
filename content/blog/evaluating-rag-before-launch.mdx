@@ -1,0 +1,46 @@
+---
+title: "A practical checklist for evaluating RAG before launch"
+description: "How to build a test set, what to measure, and how to keep retrieval-augmented answers from regressing."
+date: "2026-10-14"
+category: "Articles"
+author: "PanjatanTech Team"
+tags: ["rag", "evaluation", "engineering"]
+---
+
+Retrieval-augmented generation (RAG) has two parts that can fail independently: retrieval can return the wrong documents, and generation can ignore or misuse the right ones. A useful evaluation checks both. This checklist is the process we recommend before putting a RAG feature in front of users.
+
+## 1. Build a test set from real questions
+
+Start with questions your users actually ask: support tickets, search logs or sales calls. For each question, record:
+
+- the question as the user phrased it
+- the document or documents that contain the answer
+- a reference answer written or reviewed by someone who knows the domain
+
+Fifty well-chosen questions are more useful than five hundred synthetic ones. Include the hard cases on purpose: ambiguous questions, questions whose answer spans two documents, and questions your documents *can't* answer.
+
+## 2. Measure retrieval on its own
+
+Before looking at generated answers, check whether the right documents come back. For each test question, query your index and ask: is a correct document in the top results?
+
+If retrieval misses, no prompt will fix the answer. Common fixes are better chunking, adding metadata filters, or indexing content you'd forgotten about.
+
+## 3. Then measure the answers
+
+For generated answers, check three things separately:
+
+- **Correctness:** does the answer agree with the reference answer?
+- **Groundedness:** is every claim supported by the retrieved documents?
+- **Refusals:** when the documents don't contain the answer, does the system say so instead of guessing?
+
+Keeping these separate tells you *what* to fix. An answer can be correct but ungrounded, which means it got lucky.
+
+## 4. Make it a gate, not a report
+
+An evaluation you run once is a snapshot. To prevent regressions, run the same test set on every change to the prompt, the model, the chunking or the index, and compare against the last accepted version. Fail the change if quality drops.
+
+The [Evaluation guide](/developers/docs/evaluation) shows how to start an evaluation from CI and read the results.
+
+## 5. Keep the test set alive
+
+Add every real failure you find in production to the test set, with its reference answer. Over time the test set becomes a record of everything your system has got wrong, and a guarantee that it won't get those wrong again.
